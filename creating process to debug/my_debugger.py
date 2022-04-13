@@ -1,6 +1,5 @@
 from ctypes import *
 from my_debugger_defines import *
-from _multiprocessing import win32
 
 kernel32 = windll.kernel32
 
@@ -18,15 +17,14 @@ class debugger():
 
         startupinfo.dwFlags = 0x1
         startupinfo.wShowWindow = 0x0
-
         startupinfo.cb = sizeof(startupinfo)
 
-        if kernel32.CreateProcessA(path_to_exe,
+        if kernel32.CreateProcessW(path_to_exe,
                                    None,
                                    None,
                                    None,
                                    None,
-                                   creation_flags,
+                                   0x00000001,
                                    None,
                                    None,
                                    byref(startupinfo),
@@ -34,8 +32,6 @@ class debugger():
 
             print("[*] We have successfully launched the process!")
             print(("[*] PID: {:d}".format(process_information.dwProcessId)))
-
-            self.h_process = self.open_process(process_information.dwProcessId)
 
         else:
             print(("[*] Error: 0x{:08x}.".format(kernel32.GetLastError())))
