@@ -5,6 +5,8 @@ from my_debugger_defines import *
 PVOID = c_void_p
 ULONG_PTR = c_ulong
 INFINITE = '0xFFFF'
+LONG = c_long
+BYTE = c_ubyte
 
 PROCESS_ALL_ACCESS = 0x001F0FF
 
@@ -51,4 +53,42 @@ class DEBUG_EVENT(Structure):
         ('dwProcessId',      DWORD),
         ('dwThreadId',       DWORD),
         ('u',                U)
+    ]
+
+class THREADENTRY32(Structure):
+    _fields_=[
+        ('dwSize',             DWORD),
+        ('cntUsage',           DWORD),
+        ('th32ThreadID',       DWORD),
+        ('th32OwnerProcessID', DWORD),
+        ('tpBasePri',          LONG),
+        ('tpDeltaPri',         LONG),
+        ('dwFlags',            DWORD)
+    ]
+
+class CONTEXT(Structure):
+    _fields_=[
+        ('ContextFlags', DWORD),
+        ('Dr0',          DWORD),
+        ('Dr1',          DWORD),
+        ('Dr2',          DWORD),
+        ('Dr3',          DWORD),
+        ('Dr6',          DWORD),
+        ('Dr7',          DWORD),
+        ('FloatSave',    FLOATING_SAVE_AREA),
+        ('SegGs',        DWORD),
+        ('SegFs',        DWORD),
+        ('SegDs',        DWORD),
+        ('Edi',          DWORD),
+        ('Esi',          DWORD),
+        ('Ebx',          DWORD),
+        ('Ecx',          DWORD),
+        ('Eax',          DWORD),
+        ('Ebp',          DWORD),
+        ('Eip',          DWORD),
+        ('SegCs',        DWORD),
+        ('EFlags',       DWORD),
+        ('Esp',          DWORD),
+        ('SegSs',        DWORD),
+        ('ExtendedRegisters', BYTE)
     ]
