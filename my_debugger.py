@@ -15,6 +15,8 @@ class debugger():
         self.h_process       = None
         self.pid             = None
         self.debugger_active = False
+        self.h_thread        = None
+        self.context         = None
 
     def load(self, path_to_exe):
         #creation_flag = CREATE_NEW_CONSOLE
@@ -106,7 +108,7 @@ class debugger():
         
     def get_thread_context(self, thread_id = None, h_thread = None):
         context = CONTEXT()
-        context.ContextFlags = CONTEXTFULL | CONTEXT_DEBUG_REGISTERS
+        context.ContextFlags = CONTEXT_FULL | CONTEXT_DEBUG_REGISTERS
 
         if h_thread is None:
             h_thread = self.open_thread(thread_id)
@@ -115,3 +117,16 @@ class debugger():
             return context
         else:
             return False
+    
+    def get_debug_event(self):
+        debug_event = DEBUG_EVENT
+        continue_status = DBG_CONTINUE
+
+        if kernel32.WaitForDebugEvent(byref(debug_event), INFINITE):
+            self.h_thread = self.open_thread(debug_event.dwThreadId)
+            self.context  = self.get_thread_context(h_thread=self.h_thread)
+
+            print('Event Code: ', debug_event.dwDebugEventCode, end='')
+            print(' Thread ID: ', debug_event.dwThreadId)
+
+            kernel32.ContinueDebugEvent(debug_event.dwProcessId, debug_event.dwThreadId, continue_status)
